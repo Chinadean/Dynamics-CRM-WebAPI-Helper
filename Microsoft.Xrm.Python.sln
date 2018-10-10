@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2035
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Microsoft.Xrm.Python", "Microsoft.Xrm.Python\Microsoft.Xrm.Python.pyproj", "{AB2E42BB-222A-4492-8814-9FFE486BB03C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AB2E42BB-222A-4492-8814-9FFE486BB03C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB2E42BB-222A-4492-8814-9FFE486BB03C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DFA3EA76-D8AB-4092-9741-B01569A78CA7}
+	EndGlobalSection
+EndGlobal
