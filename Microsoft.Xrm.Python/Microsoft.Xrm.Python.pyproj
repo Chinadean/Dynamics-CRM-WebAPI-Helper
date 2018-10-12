@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>ab2e42bb-222a-4492-8814-9ffe486bb03c</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Microsoft.Xrm.Python.py</StartupFile>
+    <StartupFile>TestEntry.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -21,7 +21,18 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Microsoft.Xrm.Python.py" />
+    <Folder Include="Xrm\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="TestEntry.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Xrm\Xrm.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Xrm\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
