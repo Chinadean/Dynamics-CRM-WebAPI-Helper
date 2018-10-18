@@ -5,8 +5,13 @@ class OrganizationServiceProxy():
     """
     Use: Used as the primary method for firing org side actions.
     """
+    ClientCredentials = None
+    Access_Token = None
 
-    def Authenticate():
+
+    def Authenticate(self):
+        if self.ClientCredentials == None or type(self.ClientCredentials) is not ClientCredentials:
+            raise AttributeError("Please define ClientCredentials or pass ClientCredentials as correct type.")
         pass
 
     def Create(entity):
@@ -33,13 +38,9 @@ class ClientCredentials():
     """
     Use: Used to contain the client credentials used by the user for connection. 
     """
-    pass
-
-class ConnectionString():
-    """
-    Use: Used as a substitute to specify certain connection parameters used.
-    """
-    pass
+    Username = None
+    Password = None
+    CRMUrl = None
 
 class SecurityTokenResponse():
     """
