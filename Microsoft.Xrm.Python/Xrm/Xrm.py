@@ -56,9 +56,9 @@ class OrganizationServiceProxy():
             raise AttributeError("Unable to locate access_token or expires_on in response content.")
 
     def ExtractSetJson(self, request):
+        # Future Proofing
         return request.json()
 
-    
     def RequestToken(self, data):
         response = requests.post(self.TokenEndpoint, data=data)
         if response.status_code == 200:
@@ -74,6 +74,9 @@ class OrganizationServiceProxy():
             return False
         else: 
             return True
+
+    def InternalGetHeaders(self, requesttype):
+        pass
 
     def Create(self, entity):
         pass
@@ -103,31 +106,48 @@ class ClientCredentials():
     Password = None
     CRMUrl = None
 
-class SecurityTokenResponse():
-    """
-    Use: Used for the user to retreive the Oauth2 Security Token currently in use by OrganizationServiceProxy.
-    """
-    pass
-
-class ServiceUrls():    
-    """
-    Use: Used by OrganizationServiceProxy to return the ServiceUrls in relation to the connected instance.
-    """
-    pass
-
 class Entity():
     """
     Use: Used to represent an entity within CRM - Either Referenced or Non-Referenced.
     """
-    pass
+    Guid = None
+    Attributes = {}
+    EntityType = None
+
+    def AddAttribute(self, attribute):
+        self.Attributes[attribute[0]] = attribute[1]
+
+    def GetAttributes(self):
+        return self.Attributes
+
+    def SetAttributes(self, attributes):
+        self.Attributes = attributes
+
+    def SetGuid(self, guid):
+        self.Guid = guid
+
 
 class EntityCollection():
     """
-    Use: Used a container of Entity types.
+    Use: Used a container of Entity type.
     """
+    Entities = []
+
+class Request():
     pass
 
-class OptonSetValue():
+class ExecuteMultiple(Request):
+    pass
+
+class Delete(Request):
+    pass
+
+class Create(Request):
+    pass
+
+
+
+class OptionSetValue():
     """
     Use: Used to set a value of an option set used in a query.
     """
