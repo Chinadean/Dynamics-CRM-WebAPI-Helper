@@ -17,6 +17,7 @@ class OrganizationServiceProxy():
     ClientCredentials = None
     AccessToken = None
     AccessTokenExpiry = None
+    ApiUrl = None
     TokenEndpoint = "https://login.microsoftonline.com/common/oauth2/token"
     ClientId = "2ad88395-b77d-4561-9441-d0e40824f9bc" 
 
@@ -47,6 +48,8 @@ class OrganizationServiceProxy():
         }
         # Makes request and returns the json dictionary.
         ResponseJson = self.ExtractSetJson(self.RequestToken(WebformData))
+
+        self.ApiUrl = self.ClientCredentials.CRMUrl + '/api/data/v9.0/'
 
         # Start trying to set the OrganizationServiceProxy Authentication context.
         try:
@@ -79,7 +82,17 @@ class OrganizationServiceProxy():
         pass
 
     def Create(self, entity):
-        pass
+        if entity.EntityType == None:
+            raise AttributeError('Object Type: Entity is missing an EntityType String.')
+        headers = {
+            'Content-Type': 'application/json; charset=utf-8',
+            'OData-MaxVersion': '4.0',
+            'OData-Version': '4.0',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer ' + self.AccessToken
+        }
+        # json.dumps to prevent invalid json error due to single quotes default by python (ez work around)
+        response = requests.post(self.ApiUrl+entity.EntityType, headers=headers, data=json.dumps(entity.Attributes))
 
     def Delete(self, string, guid):
         pass
@@ -113,19 +126,6 @@ class Entity():
     Guid = None
     Attributes = {}
     EntityType = None
-
-    def AddAttribute(self, attribute):
-        self.Attributes[attribute[0]] = attribute[1]
-
-    def GetAttributes(self):
-        return self.Attributes
-
-    def SetAttributes(self, attributes):
-        self.Attributes = attributes
-
-    def SetGuid(self, guid):
-        self.Guid = guid
-
 
 class EntityCollection():
     """
