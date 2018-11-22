@@ -4,7 +4,7 @@ def main():
     """ Authentication Test
     x = Xrm.ClientCredentials()
     x.CRMUrl = "https://colton.api.crm.dynamics.com"
-    x.Password = "Fargoctslabs!"
+    x.Password = ""
     x.Username = "admin@coltonlathrop.net"
 
     xx = Xrm.OrganizationServiceProxy()
