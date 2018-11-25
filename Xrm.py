@@ -78,12 +78,53 @@ class OrganizationServiceProxy():
         else: 
             return True
 
-    def InternalGetHeaders(self, requesttype):
-        pass
+    # do I really need this?
+    def AuthenticateForce(self):
+        """Authenticates the current passed ClientCredentials with microsoftonline/AAD
+
+            Primarily used internally during operation to prevent request with expired token.
+
+        Args:
+            self: Authenticates it's own context.
+
+        Returns:
+            Nothing. Implied successful if no exception is thrown.
+
+        Raises:
+            AttributeError: Please define ClientCredentials or pass ClientCredentials as correct type.
+            BaseException: Access token is already set in this context.
+        """
+        WebformData = {
+            'client_id': self.ClientId,
+            'resource': self.ClientCredentials.CRMUrl,
+            'username': self.ClientCredentials.Username,
+            'password': self.ClientCredentials.Password,
+            'grant_type': 'password'
+        }
+
+        ResponseJson = self.ExtractSetJson(self.RequestToken(WebformData))
+
+        try:
+            self.AccessToken = ResponseJson["access_token"]
+            self.AccessTokenExpiry = ResponseJson["expires_on"]
+        except:
+            raise AttributeError("Unable to locate access_token or expires_on in response content.")
 
     def Create(self, entity):
-        if entity.EntityType == None:
-            raise AttributeError('Object Type: Entity is missing an EntityType String.')
+        """Takes an Entity class Type and verifies it has the required attributes
+            Updates the passed entity with the Entity Type's Dictionary.
+
+        Args:
+            entity: Entity Type for which needs Attributes(for initial create) and EntityType.
+
+        Returns:
+            The HTTP Post Response requests object.
+        """
+        if self.CheckToken() == False:
+            self.AuthenticateForce()
+
+        self.VerifyEntity(entity, 'create')
+
         headers = {
             'Content-Type': 'application/json; charset=utf-8',
             'OData-MaxVersion': '4.0',
@@ -91,24 +132,82 @@ class OrganizationServiceProxy():
             'Accept': 'application/json',
             'Authorization': 'Bearer ' + self.AccessToken
         }
-        # json.dumps to prevent invalid json error due to single quotes default by python (ez work around)
-        response = requests.post(self.ApiUrl+entity.EntityType, headers=headers, data=json.dumps(entity.Attributes))
 
-    def Delete(self, string, guid):
+        # json.dumps to prevent invalid json error due to single quotes default by python (ez work around)
+        return requests.post(self.ApiUrl+entity.EntityType, headers=headers, data=json.dumps(entity.Attributes))
+
+    
+    # TODO: Update record reference.   
+    def Update(self, entity):
+        """Takes an Entity class Type and verifies it has the required attributes
+            Updates the passed entity with the Entity Type's Dictionary.
+
+        Args:
+            entity: Entity Type for which needs Attributes, EntityType, and Guid Passed. 
+
+        Returns:
+            The HTTP Patch Response requests object.
+        """
+        if self.CheckToken() == False:
+            self.AuthenticateForce()
+
+        self.VerifyEntity(entity, 'update')
+
+        headers = {
+            'Content-Type': 'application/json; charset=utf-8',
+            'OData-MaxVersion': '4.0',
+            'OData-Version': '4.0',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer ' + self.AccessToken
+        }
+
+        return requests.patch(self.BuildTargetURL(entity.EntityType, entity.Guid), headers=headers, data=json.dumps(entity.Attributes))
+
+    def BuildTargetURL(self, entitytype, entityid):
+        return self.ApiUrl + entitytype + "(" + entityid + ")"
+
+    # TODO: Delete target record. Hardcode references for Entity type compat and without object instatiation if guid is known.
+    def Delete(self, string, guid): 
         pass
 
+    # TODO: Execute the workflow request with input parameters.
     def Execute(self, request):
         pass
 
+    # TODO: Retrieve from a guid with column set required. Use RetrieveAll if all columns needed.
     def Retrieve(self, string, guid, columnSet):
         pass
 
+    # TODO: Retrieve Single record but all column set. Inefficient but needed for simple and hard-coded use cases.
+    def RetrieveAll(self, entitytype, guid):
+        pass
+
+    # TODO: Retrieve muliple records based off the query base.
     def RetrieveMultiple(self, queryBase):
         pass
 
-    def Update(self, entity):
-        pass
+    def VerifyEntity(self, entity, requesttype):
+        # Just learned no switch case in python - oh well
 
+        # We check for generic availability in entity class, as these metadata schema names can be custom and 
+        # we don't want to bind the user to arbitary guidlines and metadata fetches on OrgService to verify. Keep this 
+        # simple, smart, and readable.
+
+        if requesttype == 'create':
+            if entity.EntityType == None:
+                raise AttributeError('Object Type: Entity is missing an EntityType String.')
+            if entity.Attributes == {}:
+                raise AttributeError('Object Attributes: Entity is missing object attributes.')
+        if requesttype == 'update':
+            if entity.EntityType == None:
+                raise AttributeError('Object Type: Entity is missing an EntityType String.')
+            if entity.Guid == None:
+                raise AttributeError('Object Guid: Entity must have valid object Guid to update.')
+    
+    # TODO: Setup metadata object to fetch if needed for more dynamic use cases.
+    def BuildMetadata(self):
+        raise NotImplementedError()
+    
     pass
 
 class ClientCredentials():
