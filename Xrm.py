@@ -250,6 +250,8 @@ class OptionSetValue():
     """
     Use: Used to set a value of an option set used in a query.
     """
+    Value = None
+    
     pass
 
 class ColumnSet():
