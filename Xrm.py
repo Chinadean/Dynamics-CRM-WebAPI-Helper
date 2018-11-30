@@ -1,7 +1,7 @@
 import json
 import time
 import requests
-
+import re
 
 class OrganizationServiceProxy():
     """
@@ -278,6 +278,14 @@ class QueryExpression():
     """
     pass
 
+"""
+ Start the static functions used as helpers
+"""
 
+def extract_guid(response):
+	# Extracts first guid from a create response (typically only one anyways)
+	guid = re.findall(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[89ab][0-9a-f]{3}-[0-9a-f]{12}", response.headers['Location'])
+	return guid[0]
+ 
 
 
