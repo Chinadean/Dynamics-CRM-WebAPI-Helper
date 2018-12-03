@@ -184,6 +184,7 @@ class OrganizationServiceProxy():
 
     # TODO: Retrieve muliple records based off the query base.
     def RetrieveMultiple(self, queryBase):
+        # place holder
         pass
 
     def VerifyEntity(self, entity, requesttype):
