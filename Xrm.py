@@ -181,11 +181,11 @@ class OrganizationServiceProxy():
 
     # TODO: Retrieve Single record but all column set. Inefficient but needed for simple and hard-coded use cases.
     def RetrieveAll(self, entitytype, guid):
-        """Takes an Entity class Type and verifies it has the required attributes
-            Updates the passed entity with the Entity Type's Dictionary.
+        """Takes an entitytype string and a guid then returns all columns of the request
 
         Args:
-            entity: Entity Type for which needs Attributes, EntityType, and Guid Passed. 
+            entitytype: Entity Type for which needs Attributes, EntityType, and Guid Passed. 
+            guid: guid for the record - is convertion checked.
 
         Returns:
             The HTTP Patch Response requests object.
