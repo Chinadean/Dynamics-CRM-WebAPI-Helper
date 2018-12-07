@@ -2,6 +2,7 @@ import json
 import time
 import requests
 import re
+from uuid import UUID
 
 class OrganizationServiceProxy():
     """
@@ -175,12 +176,34 @@ class OrganizationServiceProxy():
         pass
 
     # TODO: Retrieve from a guid with column set required. Use RetrieveAll if all columns needed.
-    def Retrieve(self, string, guid, columnSet):
+    def Retrieve(self, entity, guid, columnSet):
         pass
 
     # TODO: Retrieve Single record but all column set. Inefficient but needed for simple and hard-coded use cases.
     def RetrieveAll(self, entitytype, guid):
-        pass
+        """Takes an Entity class Type and verifies it has the required attributes
+            Updates the passed entity with the Entity Type's Dictionary.
+
+        Args:
+            entity: Entity Type for which needs Attributes, EntityType, and Guid Passed. 
+
+        Returns:
+            The HTTP Patch Response requests object.
+        """
+        if self.CheckToken() == False:
+            self.AuthenticateForce()
+
+        self.VerifyEntity(guid, 'retrieveall')
+
+        headers = {
+            'Content-Type': 'application/json; charset=utf-8',
+            'OData-MaxVersion': '4.0',
+            'OData-Version': '4.0',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer ' + self.AccessToken
+        }
+
+        return requests.get(self.BuildTargetURL(entitytype, guid), headers=headers)
 
     # TODO: Retrieve muliple records based off the query base.
     def RetrieveMultiple(self, queryBase):
@@ -202,8 +225,17 @@ class OrganizationServiceProxy():
         if requesttype == 'update':
             if entity.EntityType == None:
                 raise AttributeError('Object Type: Entity is missing an EntityType String.')
-            if entity.Guid == None:
-                raise AttributeError('Object Guid: Entity must have valid object Guid to update.')
+            try:
+                UUID(entity.Guid, version=4)
+            except ValueError:
+                raise AttributeError('Object Guid: You must pass valid object Guid for Update.')
+        if requesttype == 'retrieveall':
+            try:
+                UUID(entity, version=4)
+            except ValueError:
+                raise AttributeError('Object Guid: You must pass valid object Guid for RetrieveAll.')
+
+
     
     # TODO: Setup metadata object to fetch if needed for more dynamic use cases.
     def BuildMetadata(self):
@@ -252,12 +284,11 @@ class OptionSetValue():
     Use: Used to set a value of an option set used in a query.
     """
     Value = None
-    
     pass
 
-class ColumnSet():
+class EntityReference():
     """
-    Use: Used to define a columnset used for 
+    Use: Used to reference an entity and output entity references for more advanced logic/relationships.
     """
     pass
 

@@ -1,21 +1,13 @@
 import Xrm as Xrm
-import re
+from uuid import UUID
+
 
 def main():
     osp = fetch_auth()
-    ety = Xrm.Entity()
-    ety.EntityType = 'accounts'
-    ety.Attributes['name'] = 'taco'
-    x = osp.Create(ety)
-    print(x.status_code)
-    print(x.cookies.get_dict())
-    print(x.headers['Location'])
-    guid = Xrm.extract_guid(x) 
-    print(guid)
-    ety.Guid = guid
-    ety.Attributes['name'] = 'taco2'
-    xx = osp.Update(ety)
-    print(xx.status_code)
+    for i in range(1000):
+        x = osp.RetrieveAll('accounts', '0FB5275C-B2F4-E811-A94E-000D3A4E8995')
+        print(str(x.status_code) + ' : ' + str(i))
+
 
 def fetch_auth():
     cc = Xrm.ClientCredentials()
