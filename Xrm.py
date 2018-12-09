@@ -2,6 +2,7 @@ import json
 import time
 import requests
 import re
+from collections.abc import MutableSequence
 from uuid import UUID
 
 class OrganizationServiceProxy():
@@ -292,23 +293,25 @@ class EntityReference():
     """
     pass
 
-class ConditionExpression():
+class SelectColumns(MutableSequence):
     """
-    Use: Used to define conditions for retrievemultple query expressions.
+    Use: Used to dictate the response columns in a retrieve and retrieve multiple.
     """
-    pass
-
-class FilterExpression():
-    """
-    Use: Used to define the filter in a QueryBase.
-    """
-    pass
-
-class QueryExpression():
-    """
-    Use: Used to define the query used in a retrievemultiple request.
-    """
-    pass
+    def __init__(self):
+        self.L = []
+        super().__init__()
+    def __getitem__(self, i):
+        return self.L[i]
+    def __len__(self):
+        return len(self.L)
+    def __delitem__(self, index):
+        return self.L.pop(index)
+        
+    def __setitem__(self, index, object):
+        self.insert(index, object)
+        
+    def insert(self, index, object):
+        self.L.insert(index, object)
 
 """
  Start the static functions used as helpers

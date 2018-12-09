@@ -3,10 +3,15 @@ from uuid import UUID
 
 
 def main():
-    osp = fetch_auth()
-    for i in range(1000):
-        x = osp.RetrieveAll('accounts', '0FB5275C-B2F4-E811-A94E-000D3A4E8995')
-        print(str(x.status_code) + ' : ' + str(i))
+    #osp = fetch_auth()
+    x = Xrm.SelectColumns()
+    x.append('a')
+    print(x[0])
+    x[0] = 'dd'
+    x.pop(0)
+
+
+
 
 
 def fetch_auth():
