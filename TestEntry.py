@@ -3,12 +3,10 @@ from uuid import UUID
 
 
 def main():
-    #osp = fetch_auth()
-    x = Xrm.SelectColumns()
-    x.append('a')
-    print(x[0])
-    x[0] = 'dd'
-    x.pop(0)
+    osp = fetch_auth()
+    x = osp.Delete('accounts', 'ADDC96D6-B5F4-E811-A94D-000D3A1F667C')
+    print(x.status_code)
+    
 
 
 

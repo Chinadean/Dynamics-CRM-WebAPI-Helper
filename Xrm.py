@@ -170,7 +170,34 @@ class OrganizationServiceProxy():
 
     # TODO: Delete target record. Hardcode references for Entity type compat and without object instatiation if guid is known.
     def Delete(self, string, guid): 
+        """Takes an Entity class Type and verifies it has the required attributes
+            Updates the passed entity with the Entity Type's Dictionary.
+
+        Args:
+            entity: Entity Type for which needs Attributes, EntityType, and Guid Passed. 
+
+        Returns:
+            The HTTP Patch Response requests object.
+        """
+        if self.CheckToken() == False:
+            self.AuthenticateForce()
+
+        self.VerifyEntity(guid, 'delete')
+
+        headers = {
+            'Content-Type': 'application/json; charset=utf-8',
+            'OData-MaxVersion': '4.0',
+            'OData-Version': '4.0',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer ' + self.AccessToken
+        }
+
+        return requests.delete(self.BuildTargetURL(string, guid), headers=headers)
+
+    # TODO: Delete target field value out of record - 'nulling' the field.
+    def DeleteField(self, string, guid):
         pass
+
 
     # TODO: Execute the workflow request with input parameters.
     def Execute(self, request):
@@ -235,6 +262,11 @@ class OrganizationServiceProxy():
                 UUID(entity, version=4)
             except ValueError:
                 raise AttributeError('Object Guid: You must pass valid object Guid for RetrieveAll.')
+        if requesttype == 'delete':
+            try:
+                UUID(entity, version=4)
+            except ValueError:
+                raise AttributeError('Object Guid: You must pass valid object Guid for delete.')
 
 
     
@@ -278,8 +310,6 @@ class Delete(Request):
 class Create(Request):
     pass
 
-
-
 class OptionSetValue():
     """
     Use: Used to set a value of an option set used in a query.
@@ -296,14 +326,18 @@ class EntityReference():
 class SelectColumns(MutableSequence):
     """
     Use: Used to dictate the response columns in a retrieve and retrieve multiple.
+    Mutable Iterable
     """
     def __init__(self):
         self.L = []
         super().__init__()
+
     def __getitem__(self, i):
         return self.L[i]
+
     def __len__(self):
         return len(self.L)
+
     def __delitem__(self, index):
         return self.L.pop(index)
         
