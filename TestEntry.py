@@ -15,7 +15,7 @@ def main():
 def fetch_auth():
     cc = Xrm.ClientCredentials()
     cc.CRMUrl = "https://coltonlathrop.api.crm.dynamics.com"
-    cc.Password = "Fargoctslabs!"
+    cc.Password = ""
     cc.Username = "admin@coltonlathrop.net"
     osp = Xrm.OrganizationServiceProxy()
     osp.ClientCredentials = cc
