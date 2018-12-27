@@ -170,14 +170,14 @@ class OrganizationServiceProxy():
 
     # TODO: Delete target record. Hardcode references for Entity type compat and without object instatiation if guid is known.
     def Delete(self, string, guid): 
-        """Takes an Entity class Type and verifies it has the required attributes
-            Updates the passed entity with the Entity Type's Dictionary.
+        """Deletes record Guid of type String.
 
         Args:
-            entity: Entity Type for which needs Attributes, EntityType, and Guid Passed. 
+            string: string of the web api endpoint
+            guid: string of the record's guid
 
         Returns:
-            The HTTP Patch Response requests object.
+            The HTTP Dete Response requests object.
         """
         if self.CheckToken() == False:
             self.AuthenticateForce()
@@ -195,8 +195,30 @@ class OrganizationServiceProxy():
         return requests.delete(self.BuildTargetURL(string, guid), headers=headers)
 
     # TODO: Delete target field value out of record - 'nulling' the field.
-    def DeleteField(self, string, guid):
-        pass
+    def DeleteField(self, string, guid, field):
+        """Deletes field value of type string , as record == guid
+
+        Args:
+            string: logicalname of the field as string
+            guid: guid of the target record
+
+        Returns:
+            The HTTP Patch Response requests object.
+        """
+        if self.CheckToken() == False:
+            self.AuthenticateForce()
+
+        self.VerifyEntity(guid, 'deletefield')
+
+        headers = {
+            'Content-Type': 'application/json; charset=utf-8',
+            'OData-MaxVersion': '4.0',
+            'OData-Version': '4.0',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer ' + self.AccessToken
+        }
+
+        return requests.delete(self.BuildTargetURL(string, guid)+'/{}'.format(field), headers=headers)
 
 
     # TODO: Execute the workflow request with input parameters.
