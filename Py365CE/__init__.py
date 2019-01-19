@@ -1,2 +1,2 @@
 # Py365CE __Init__
-from .service import service
+from .auth import user_context

@@ -15,6 +15,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     install_requires=[
           'requests',
+          'adal==1.2.0',
       ],
     classifiers=[
         "Programming Language :: Python :: 3",
