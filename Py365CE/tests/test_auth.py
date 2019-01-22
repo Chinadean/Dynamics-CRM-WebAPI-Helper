@@ -1,6 +1,6 @@
 from Py365CE import *
 import sys
-import getopt
+
 
 
 def main():

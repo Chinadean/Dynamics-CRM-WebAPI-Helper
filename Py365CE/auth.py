@@ -1,16 +1,23 @@
 from adal import *
 from datetime import datetime
-from Py365CE import *
+
 
 
 class user_context(AuthenticationContext):
     '''Implements AuthenticationContext from Python Adal Library
     Adds additional functionality for Executing Py365CE Request Classes'''
 
+    default_headers = {'Content-Type': 'application/json; charset=utf-8',
+                            'OData-MaxVersion': '4.0',
+                            'OData-Version': '4.0',
+                            'Accept': 'application/json'}
+    api_query_stem = '/api/data/v9.0/'
+
     @property
     def is_authed(self):
         if len(self.cache._cache) >= 1:
             if not (datetime.strptime(self.get_auth_value('expiresOn'), '%Y-%m-%d %H:%M:%S.%f') < datetime.now()):
+                self.default_headers.update({'Authorization':'Bearer ' + self.get_auth_value('accessToken')})
                 return True
             else:
                 return False
@@ -42,10 +49,4 @@ class user_context(AuthenticationContext):
         '''
         return super(user_context, self).acquire_token_with_username_password(resource, username, password, '51f81489-12ee-4a9e-aaae-a2591f45987d')
     
-    def execute(self, call):
-        '''Execute the passed in request object with self passed into it.
-
-        :param obj call: request object that this user_context
-            is called with.
-        '''
-        return call.execute(self)
+    
