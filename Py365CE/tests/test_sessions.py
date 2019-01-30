@@ -1,6 +1,6 @@
 from Py365CE import *
 import sys
-
+import requests
 
 
 def main():
@@ -10,14 +10,15 @@ def main():
     # Lazily auths with already valid clientID.
     service_client.lazy_acquire_token_with_username_password(url, username, password)
     # Creates Record create_record object.
-    cr = create_record('accounts', service_client)
-    # Sets the data to create the account.
-    cr.data = {'name':'Contoso'}
-    # Executes the create with debug enabled. (Disables Certificate Check)
-    x = service_client.execute(cr)
-    print(x)
-
-
+    token = service_client.get_auth_value('accessToken')
+    r = requests.session()
+    r.headers.update({'Authorization':'Bearer ' + service_client.get_auth_value('accessToken')})
+    for i in range(10):
+        r.get("https://coltonlathrop.crm.dynamics.com/api/data/v9.1/", verify=False)
+    if r.cookies._find('ApplicationGatewayAffinit'):
+        print(r.cookies._find('ApplicatiosnGatewayAffinity'))
+    for i in range(10):
+        r.get("https://coltonlathrop.crm.dynamics.com/api/data/v9.1/", verify=False)
 
 
 if __name__ == "__main__":

@@ -3,11 +3,11 @@ import requests
 import json
 
 
-class create_record():
+class delete_record():
     
-    request_type = 0
+    request_type = 3
 
-    def __init__(self, entity_type, auth_context, data=None):
+    def __init__(self, entity_type, auth_context, guid=None):
         '''Takes WebAPI entity identifier and an authcontext to build create.
         
         :param str entity_type: String of the records WebAPI entity identifier.
@@ -17,11 +17,11 @@ class create_record():
         '''
         self.entity_type = entity_type
         self.auth_context = auth_context
-        if data is not None:
-            self.data = data
+        if guid is not None:
+            self.guid = guid
     
     def execute(self, context=None, debug=False):
-        '''Executes the create_record.
+        '''Executes the delete_record.
         
         :param user_context context: (optional) Pass is new user_context if needed here.
         :param bool debug: (optional) Sets the option to verify certificate.
@@ -31,11 +31,11 @@ class create_record():
             self.auth_context = context
         if not self.auth_context.is_authed:
             raise AuthException('User_Context is not authed.')
-        if self.data is None:
-            raise AttributeError('Data is empty, atleast one field is required.')
-        return requests.post(self.build_create_url, data=json.dumps(self.data), headers=self.auth_context.default_headers, verify=not debug)
+        if self.guid is None:
+            raise AttributeError('Guid is required to delete.')
+        return requests.post(self.build_delete_url, headers=self.auth_context.default_headers, verify=not debug)
     
     @property
-    def build_create_url(self):
-        return self.auth_context.get_auth_value('resource') + self.auth_context.api_query_stem + self.entity_type
+    def build_delete_url(self):
+        return self.auth_context.get_auth_value('resource') + self.auth_context.api_query_stem + self.entity_type + f'({self.guid})'
 
