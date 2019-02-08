@@ -67,7 +67,7 @@ class client_context(AuthenticationContext):
         pass
     
     def execute_delete(self, url, data=None, Debug=False):
-        return self._session.post
+        return self._session.delete(url)
     
     def execute_put(self, request):
         pass 
