@@ -30,18 +30,32 @@ class client_context(AuthenticationContext):
         # TODO: Add additional request types as they are created.
         if not self.is_authed:
             raise AuthException('User_Context is not authed.')
+        # Update headers with active accessToken... Could have check logic here?
         self._session.headers.update({'Authorization':'Bearer ' + self.get_auth_value('accessToken')})
+
+        # Begin Pseudo-Switch case depending on request type.
+        response = None
+
         if request.request_type == 0: # create_record
             url = request.build_create_url
             data = request.data
-            return self.execute_post(url, data, Debug=self._debug)
+            response = self.execute_post(url, data, Debug=self._debug)
+        
         elif  request.request_type == 1:
             pass
+       
         elif  request.request_type == 2:
             pass
+        
         elif  request.request_type == 3: # delete_record
-            return self.execute_delete(request, Debug=self._debug)
-        raise TypeError('Argument does not have value request_type.')
+            response = self.execute_delete(request.build_delete_url, Debug=self._debug)
+        
+        if response == None: 
+            raise TypeError('Argument does not have valid request_type.')
+        
+        return response
+        
+
         
     def execute_get(self, url, data=None, Debug=False):
         pass
@@ -53,11 +67,14 @@ class client_context(AuthenticationContext):
         pass
     
     def execute_delete(self, url, data=None, Debug=False):
-        pass
+        return self._session.post
     
     def execute_put(self, request):
         pass 
    
+    def dump_affinity_token(self):
+        pass
+
     @property
     def is_authed(self):
         if len(self.cache._cache) >= 1:
