@@ -37,28 +37,29 @@ class client_context(AuthenticationContext):
         response = None
 
         if request.request_type == 0: # create_record
-            url = request.build_create_url
-            data = request.data
-            response = self.execute_post(url, data, Debug=self._debug)
+            response = self.execute_post(request.build_create_url, request.data, Debug=self._debug)
         
-        elif  request.request_type == 1:
+        elif  request.request_type == 1: # update_record
             pass
        
-        elif  request.request_type == 2:
-            pass
+        elif  request.request_type == 2: # retrieve_record
+            response = self.execute_get(request.build_retrieve_url, Debug=self._debug)
         
         elif  request.request_type == 3: # delete_record
             response = self.execute_delete(request.build_delete_url, Debug=self._debug)
         
+        elif request.request_type == 4: # retrieve_multiple
+            pass
+        
         if response == None: 
-            raise TypeError('Argument does not have valid request_type.')
+            raise TypeError('Did not request - Argument does not have valid request_type.')
         
         return response
         
 
         
     def execute_get(self, url, data=None, Debug=False):
-        pass
+        return self._session.get(url, data=json.dumps(data))
     
     def execute_post(self, url, data, Debug=False):
         return self._session.post(url, data=json.dumps(data))
