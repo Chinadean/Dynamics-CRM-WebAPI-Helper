@@ -40,7 +40,7 @@ class client_context(AuthenticationContext):
             response = self.execute_post(request.build_create_url, request.data, Debug=self._debug)
         
         elif  request.request_type == 1: # update_record
-            pass
+            response = self.execute_patch(request.build_update_url, request.data, Debug=self._debug)
        
         elif  request.request_type == 2: # retrieve_record
             response = self.execute_get(request.build_retrieve_url, Debug=self._debug)
@@ -65,7 +65,7 @@ class client_context(AuthenticationContext):
         return self._session.post(url, data=json.dumps(data))
 
     def execute_patch(self, url, data, Debug=False):
-        pass
+        return self._session.patch(url, data=json.dumps(data))
     
     def execute_delete(self, url, data=None, Debug=False):
         return self._session.delete(url)

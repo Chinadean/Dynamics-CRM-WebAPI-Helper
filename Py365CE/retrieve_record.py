@@ -39,4 +39,5 @@ class retrieve_record():
         else:
             for i in self.columns:
                 ret_str += f'{i},'
+            return ret_str
 
