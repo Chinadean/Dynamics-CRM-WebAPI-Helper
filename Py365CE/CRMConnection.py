@@ -4,7 +4,7 @@ import requests
 import json
 
 
-class client_context(AuthenticationContext):
+class CRMConnection(AuthenticationContext):
     '''Implements AuthenticationContext from Python Adal Library
     Adds additional functionality for Executing Py365CE Request Classes'''
 
@@ -18,60 +18,24 @@ class client_context(AuthenticationContext):
     _affinity_reset = None
 
     def __init__(self, tenant, Debug=False, AffinityReset=None):
-        if self._session == None:
-            self._session = requests.session()
+        self._session = requests.session()
         self._debug = Debug
         self._affinity_reset = AffinityReset
         for i in self.default_headers:
             self._session.headers.update({i:self.default_headers[i]})
-        super(client_context, self).__init__(tenant)
-    
-    def execute(self, request):
-        # TODO: Add additional request types as they are created.
-        if not self.is_authed:
-            raise AuthException('User_Context is not authed.')
-        # Update headers with active accessToken... Could have check logic here?
-        self._session.headers.update({'Authorization':'Bearer ' + self.get_auth_value('accessToken')})
-
-        # Begin Pseudo-Switch case depending on request type.
-        response = None
-
-        if request.request_type == 0: # create_record
-            response = self.execute_post(request.build_create_url, request.data, Debug=self._debug)
+        super(CRMConnection, self).__init__(tenant)        
         
-        elif  request.request_type == 1: # update_record
-            response = self.execute_patch(request.build_update_url, request.data, Debug=self._debug)
-       
-        elif  request.request_type == 2: # retrieve_record
-            response = self.execute_get(request.build_retrieve_url, Debug=self._debug)
-        
-        elif  request.request_type == 3: # delete_record
-            response = self.execute_delete(request.build_delete_url, Debug=self._debug)
-        
-        elif request.request_type == 4: # retrieve_multiple
-            pass
-        
-        if response == None: 
-            raise TypeError('Did not request - Argument does not have valid request_type.')
-        
-        return response
-        
-
-        
-    def execute_get(self, url, data=None, Debug=False):
+    def Get(self, url, data=None):
         return self._session.get(url, data=json.dumps(data))
     
-    def execute_post(self, url, data, Debug=False):
+    def Post(self, url, data):
         return self._session.post(url, data=json.dumps(data))
 
-    def execute_patch(self, url, data, Debug=False):
+    def Patch(self, url, data):
         return self._session.patch(url, data=json.dumps(data))
     
-    def execute_delete(self, url, data=None, Debug=False):
+    def Delete(self, url, data=None):
         return self._session.delete(url)
-    
-    def execute_put(self, request):
-        pass 
    
     def dump_affinity_token(self):
         pass
@@ -110,8 +74,6 @@ class client_context(AuthenticationContext):
         :returns: dict with several keys, include "accessToken" and
             "refreshToken".
         '''
-        return super(client_context, self).acquire_token_with_username_password(resource, username, password, '51f81489-12ee-4a9e-aaae-a2591f45987d')
+        return super(CRMConnection, self).acquire_token_with_username_password(resource, username, password, '51f81489-12ee-4a9e-aaae-a2591f45987d')
 
-class AuthException(Exception):
-    pass
     
